@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mrdios.foodie.mapper.CategoryMapper">
+    <resultMap id="BaseResultMap" type="com.mrdios.foodie.pojo.Category">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="father_id" property="fatherId" jdbcType="INTEGER"/>
+        <result column="logo" property="logo" jdbcType="VARCHAR"/>
+        <result column="slogan" property="slogan" jdbcType="VARCHAR"/>
+        <result column="cat_image" property="catImage" jdbcType="VARCHAR"/>
+        <result column="bg_color" property="bgColor" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="subCatListMap" type="com.mrdios.foodie.pojo.vo.CategoryVo">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="fatherId" property="fatherId"/>
+        <collection property="subCatList" ofType="com.mrdios.foodie.pojo.vo.SubCategoryVo">
+            <id column="subId" property="subId"/>
+            <result column="subName" property="subName"/>
+            <result column="subType" property="subType"/>
+            <result column="subFatherId" property="subFatherId"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="newItemListMap" type="com.mrdios.foodie.pojo.vo.NewItemVo">
+        <id column="rootCatId" property="rootCatId"/>
+        <result column="rootCatName" property="rootCatName"/>
+        <result column="slogan" property="slogan"/>
+        <result column="rootCatImage" property="rootCatImage"/>
+        <result column="bgColor" property="bgColor"/>
+        <collection property="simpleItemList" ofType="com.mrdios.foodie.pojo.vo.NewItemSimpleVo">
+            <id column="itemId" property="itemId"/>
+            <result column="itemName" property="itemName"/>
+            <result column="itemUrl" property="itemUrl"/>
+        </collection>
+    </resultMap>
+
+    <!-- 获取一级分类的子分类 -->
+    <select id="getSubCatList" resultMap="subCatListMap" parameterType="int">
+        SELECT
+            f.id AS id,
+            f.name AS name,
+            f.type AS type,
+            f.father_id AS fatherId,
+            c.id AS subId,
+            c.name AS subName,
+            c.type AS subType,
+            c.father_id AS subFatherId
+        FROM
+            category f
+            LEFT JOIN category c ON f.id = c.father_id
+        WHERE
+            f.father_id = #{rootCatId}
+    </select>
+
+    <!-- 获取一级分类的6个最新推荐商品 -->
+    <select id="get6NewItems" resultMap="newItemListMap" parameterType="int">
+        SELECT
+            c.id AS rootCatId,
+            c.name AS rootCatName,
+            c.slogan,
+            c.cat_image AS rootCatImage,
+            c.bg_color AS bgColor,
+            g.id AS itemId,
+            g.item_name AS itemName,
+            gi.url AS itemUrl,
+            gi.created_time AS createTime
+        FROM
+            category c
+            LEFT JOIN items g ON c.id = g.root_cat_id
+            LEFT JOIN items_img gi ON g.id = gi.item_id
+        WHERE
+            c.type = 1
+            AND g.root_cat_id = #{rootCatId}
+            AND gi.is_main = 1
+        ORDER BY
+            g.created_time DESC
+        LIMIT 0,6
+    </select>
+</mapper>
