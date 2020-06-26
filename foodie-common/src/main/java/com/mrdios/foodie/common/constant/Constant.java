@@ -12,5 +12,6 @@ public interface Constant {
      */
     interface PageConstant {
         Integer DEFAULT_PAGE_SIZE = 10;
+        Integer DEFAULT_SEARCH_PAGE_SIZE = 20;
     }
 }

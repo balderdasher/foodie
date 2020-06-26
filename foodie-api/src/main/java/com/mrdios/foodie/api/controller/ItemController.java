@@ -10,6 +10,7 @@ import com.mrdios.foodie.pojo.ItemsSpec;
 import com.mrdios.foodie.pojo.vo.ItemCommentCountVo;
 import com.mrdios.foodie.pojo.vo.ItemCommentVo;
 import com.mrdios.foodie.pojo.vo.ItemInfoVo;
+import com.mrdios.foodie.pojo.vo.SearchItemsVo;
 import com.mrdios.foodie.service.ItemService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 商品信息接口
@@ -73,5 +75,35 @@ public class ItemController {
             pageSize = Constant.PageConstant.DEFAULT_PAGE_SIZE;
         }
         return ApiResponse.ok(itemService.getItemCommentsPage(itemId, level, page, pageSize));
+    }
+
+    @GetMapping("/search")
+    @ApiOperation(value = "按关键字商品搜索", notes = "按关键字商品搜索")
+    public ApiResponse<PageModel<SearchItemsVo>> searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+        if (StringUtils.isBlank(keywords)) {
+            return ApiResponse.errorMsg("搜索内容不能为空");
+        }
+        if (null == page) {
+            page = 1;
+        }
+        if (null == pageSize) {
+            pageSize = Constant.PageConstant.DEFAULT_SEARCH_PAGE_SIZE;
+        }
+        return ApiResponse.ok(itemService.searchItems(keywords, sort, page, pageSize));
+    }
+
+    @GetMapping("/catItems")
+    @ApiOperation(value = "按三级分类商品搜索", notes = "按三级分类商品搜索")
+    public ApiResponse<PageModel<SearchItemsVo>> searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize) {
+        if (Objects.isNull(catId)) {
+            return ApiResponse.ok(null);
+        }
+        if (null == page) {
+            page = 1;
+        }
+        if (null == pageSize) {
+            pageSize = Constant.PageConstant.DEFAULT_SEARCH_PAGE_SIZE;
+        }
+        return ApiResponse.ok(itemService.searchItemsByThirdCat(catId, sort, page, pageSize));
     }
 }

@@ -15,4 +15,63 @@
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
         <result column="content" property="content" jdbcType="LONGVARCHAR"/>
     </resultMap>
+
+    <!-- 商品搜索-关键字 -->
+    <select id="searchItems" parameterType="map" resultType="com.mrdios.foodie.pojo.vo.SearchItemsVo">
+        SELECT
+            i.id AS itemId,
+            i.item_name AS itemName,
+            ii.url AS imgUrl,
+            i.sell_counts AS sellCounts,
+            spec.priceDiscount AS price
+        FROM
+            items i
+            LEFT JOIN items_img ii ON i.id = ii.item_id
+            LEFT JOIN ( SELECT item_id, MIN( price_discount ) AS priceDiscount FROM items_spec GROUP BY item_id ) spec ON i.id = spec.item_id
+        WHERE
+            ii.is_main = 1
+        <if test="param.keywords != null and param.keywords != ''">
+            AND i.item_name LIKE '%${param.keywords}%'
+        </if>
+        ORDER BY
+            <choose>
+                <when test="param.sort == &quot;c&quot;">
+                    i.sell_counts DESC
+                </when>
+                <when test="param.sort == &quot;p&quot;">
+                    spec.priceDiscount DESC
+                </when>
+                <otherwise>
+                    i.item_name ASC
+                </otherwise>
+            </choose>
+    </select>
+    <!-- 商品搜索-三级分类 -->
+    <select id="searchItemsByThirdCat" parameterType="map" resultType="com.mrdios.foodie.pojo.vo.SearchItemsVo">
+        SELECT
+            i.id AS itemId,
+            i.item_name AS itemName,
+            ii.url AS imgUrl,
+            i.sell_counts AS sellCounts,
+            spec.priceDiscount AS price
+        FROM
+            items i
+            LEFT JOIN items_img ii ON i.id = ii.item_id
+            LEFT JOIN ( SELECT item_id, MIN( price_discount ) AS priceDiscount FROM items_spec GROUP BY item_id ) spec ON i.id = spec.item_id
+        WHERE
+            ii.is_main = 1
+            AND i.cat_id  = #{param.catId}
+        ORDER BY
+            <choose>
+                <when test="param.sort == &quot;c&quot;">
+                    i.sell_counts DESC
+                </when>
+                <when test="param.sort == &quot;p&quot;">
+                    spec.priceDiscount DESC
+                </when>
+                <otherwise>
+                    i.item_name ASC
+                </otherwise>
+            </choose>
+    </select>
 </mapper>

@@ -8,6 +8,7 @@ import com.mrdios.foodie.mapper.*;
 import com.mrdios.foodie.pojo.*;
 import com.mrdios.foodie.pojo.vo.ItemCommentCountVo;
 import com.mrdios.foodie.pojo.vo.ItemCommentVo;
+import com.mrdios.foodie.pojo.vo.SearchItemsVo;
 import com.mrdios.foodie.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author CodePorter
@@ -84,6 +87,27 @@ public class ItemServiceImpl implements ItemService {
         PageHelper.startPage(page, pageSize);
         List<ItemCommentVo> list = itemsCommentsMapper.getItemComments(itemId, level);
         list.forEach(comment -> comment.setNickname(DesensitizationUtil.commonDisplay(comment.getNickname())));
+        return PageModel.buildPageModelFromPageInfo(list, page);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public PageModel<SearchItemsVo> searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("keywords", keywords);
+        param.put("sort", sort);
+        PageHelper.startPage(page, pageSize);
+        List<SearchItemsVo> list = itemsMapper.searchItems(param);
+        return PageModel.buildPageModelFromPageInfo(list, page);
+    }
+
+    @Override
+    public PageModel<SearchItemsVo> searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("catId", catId);
+        param.put("sort", sort);
+        PageHelper.startPage(page, pageSize);
+        List<SearchItemsVo> list = itemsMapper.searchItemsByThirdCat(param);
         return PageModel.buildPageModelFromPageInfo(list, page);
     }
 
