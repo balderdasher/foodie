@@ -1,5 +1,6 @@
 package com.mrdios.foodie.api.controller;
 
+import com.google.common.collect.Lists;
 import com.mrdios.foodie.common.bean.ApiResponse;
 import com.mrdios.foodie.common.bean.PageModel;
 import com.mrdios.foodie.common.constant.Constant;
@@ -7,10 +8,7 @@ import com.mrdios.foodie.pojo.Items;
 import com.mrdios.foodie.pojo.ItemsImg;
 import com.mrdios.foodie.pojo.ItemsParam;
 import com.mrdios.foodie.pojo.ItemsSpec;
-import com.mrdios.foodie.pojo.vo.ItemCommentCountVo;
-import com.mrdios.foodie.pojo.vo.ItemCommentVo;
-import com.mrdios.foodie.pojo.vo.ItemInfoVo;
-import com.mrdios.foodie.pojo.vo.SearchItemsVo;
+import com.mrdios.foodie.pojo.vo.*;
 import com.mrdios.foodie.service.ItemService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -105,5 +103,14 @@ public class ItemController {
             pageSize = Constant.PageConstant.DEFAULT_SEARCH_PAGE_SIZE;
         }
         return ApiResponse.ok(itemService.searchItemsByThirdCat(catId, sort, page, pageSize));
+    }
+
+    @GetMapping("/refresh")
+    @ApiOperation(value = "刷新购物车商品信息", notes = "刷新购物车商品信息")
+    public ApiResponse<List<ShopCartVo>> queryItemsBySpecIds(String itemSpecIds) {
+        if (StringUtils.isBlank(itemSpecIds)) {
+            return ApiResponse.ok();
+        }
+        return ApiResponse.ok(itemService.queryItemsBySpecIds(Lists.newArrayList(itemSpecIds.split(","))));
     }
 }

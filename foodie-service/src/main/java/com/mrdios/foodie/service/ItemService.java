@@ -8,6 +8,7 @@ import com.mrdios.foodie.pojo.ItemsSpec;
 import com.mrdios.foodie.pojo.vo.ItemCommentCountVo;
 import com.mrdios.foodie.pojo.vo.ItemCommentVo;
 import com.mrdios.foodie.pojo.vo.SearchItemsVo;
+import com.mrdios.foodie.pojo.vo.ShopCartVo;
 
 import java.util.List;
 
@@ -70,20 +71,29 @@ public interface ItemService {
 
     /**
      * 商品搜索
+     *
      * @param keywords 关键字
-     * @param sort 排序方式:c-销量，p-价格
-     * @param page 当前页
+     * @param sort     排序方式:c-销量，p-价格
+     * @param page     当前页
      * @param pageSize 每页条数
      */
     PageModel<SearchItemsVo> searchItems(String keywords, String sort, Integer page, Integer pageSize);
 
     /**
      * 商品搜索
-     * @param catId 三级分类id
-     * @param sort 排序方式:c-销量，p-价格
-     * @param page 当前页
+     *
+     * @param catId    三级分类id
+     * @param sort     排序方式:c-销量，p-价格
+     * @param page     当前页
      * @param pageSize 每页条数
      */
     PageModel<SearchItemsVo> searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize);
+
+    /**
+     * 根据规格查询商品信息,用于购物车商品信息刷新
+     *
+     * @param specIds 商品规格ids
+     */
+    List<ShopCartVo> queryItemsBySpecIds(List<String> specIds);
 
 }

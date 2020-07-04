@@ -9,6 +9,7 @@ import com.mrdios.foodie.pojo.*;
 import com.mrdios.foodie.pojo.vo.ItemCommentCountVo;
 import com.mrdios.foodie.pojo.vo.ItemCommentVo;
 import com.mrdios.foodie.pojo.vo.SearchItemsVo;
+import com.mrdios.foodie.pojo.vo.ShopCartVo;
 import com.mrdios.foodie.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,6 +103,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public PageModel<SearchItemsVo> searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize) {
         Map<String, Object> param = new HashMap<>();
         param.put("catId", catId);
@@ -109,6 +111,12 @@ public class ItemServiceImpl implements ItemService {
         PageHelper.startPage(page, pageSize);
         List<SearchItemsVo> list = itemsMapper.searchItemsByThirdCat(param);
         return PageModel.buildPageModelFromPageInfo(list, page);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<ShopCartVo> queryItemsBySpecIds(List<String> specIds) {
+        return itemsMapper.queryItemsBySpecIds(specIds);
     }
 
     private Integer getCommentCountByLevel(String itemId, Integer level) {

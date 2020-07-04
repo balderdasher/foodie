@@ -8,7 +8,7 @@ package com.mrdios.foodie.common.enums;
  */
 public enum YesOrNoEnum {
     YES(1, "是"),
-    NO(1, "否");
+    NO(0, "否");
 
     private final Integer code;
     private final String desc;
