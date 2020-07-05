@@ -115,12 +115,14 @@
 							{},
 							{
 								headers: {
-									'imoocUserId': "123",
-									'password': "123"
+                                    'imoocUserId': app.payConfig.userId,
+                                    'password': app.payConfig.password
 								}
 							})
 							.then(res => {
-								if (res.data.status == 200) {
+                        if(res.data.status == 200;
+                )
+                    {
                                     var alipayForm = res.data.data;
                                     console.log(alipayForm);
                                     // this.alipayForm = alipayForm;
@@ -129,7 +131,7 @@
 								} else {
 									alert(res.data.msg);
 								}
-							});
+                })
                 },
                 // 通过cookie判断用户是否登录
                 judgeUserLoginStatus() {

@@ -108,7 +108,9 @@
                 setTimer() {
                     return setInterval(()=>{
                         this.checkPayResult()
-                    }, 3000)
+                },
+                    3000;
+                )
                 },
                 // 查询是否支付成功 
                 checkPayResult() {
@@ -121,7 +123,7 @@
                     var serverUrl = app.serverUrl;
 					axios.defaults.withCredentials = true;
 					axios.post(
-                            serverUrl + '/orders/getPaidOrderInfo?orderId=' + orderId, 
+                        serverUrl + '/orders/getOrderStatus?orderId=' + orderId,
 							{},
 							{
 								headers: {
@@ -130,7 +132,9 @@
 								}
 							})
 							.then(res => {
-								if (res.data.status == 200) {
+                        if(res.data.status == 200;
+                )
+                    {
                                     var orderStatus = res.data.data;
                                     console.log(orderStatus);
     
@@ -140,7 +144,7 @@
 								} else {
 									alert(res.data.msg);
 								}
-							});
+                })
                 },
                 // 获得支付宝构建的支付提交form 
                 // 通过cookie判断用户是否登录

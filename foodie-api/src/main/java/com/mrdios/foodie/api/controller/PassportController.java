@@ -1,8 +1,8 @@
 package com.mrdios.foodie.api.controller;
 
+import com.mrdios.foodie.api.controller.center.UserInfoProcessor;
 import com.mrdios.foodie.common.bean.ApiResponse;
 import com.mrdios.foodie.common.utils.CookieUtils;
-import com.mrdios.foodie.common.utils.JacksonUtil;
 import com.mrdios.foodie.common.utils.MD5Utils;
 import com.mrdios.foodie.pojo.Users;
 import com.mrdios.foodie.pojo.bo.UserBo;
@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
+import static com.mrdios.foodie.common.constant.Constant.CookieNames.USER_COOKIE_NAME;
+
 /**
  * 用户注册登录控制器
  *
@@ -27,10 +29,11 @@ import java.util.Objects;
 @RestController
 @RequestMapping("passport")
 public class PassportController {
-    private static final String USER_COOKIE_NAME = "user";
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserInfoProcessor userInfoProcessor;
 
 
     /**
@@ -82,9 +85,9 @@ public class PassportController {
         if (Objects.isNull(user)) {
             return ApiResponse.errorMsg("注册失败");
         }
-        clearUserSensitive(user);
+        userInfoProcessor.clearUserSensitive(user);
         // 5 设置cookie
-        setUserCookie(user, request, response);
+        userInfoProcessor.setUserCookie(user, request, response);
         return ApiResponse.ok(user);
     }
 
@@ -107,9 +110,9 @@ public class PassportController {
         if (Objects.isNull(user)) {
             return ApiResponse.errorMsg("用户名或密码错误");
         }
-        clearUserSensitive(user);
+        userInfoProcessor.clearUserSensitive(user);
         // 2 设置cookie
-        setUserCookie(user, request, response);
+        userInfoProcessor.setUserCookie(user, request, response);
         log.info("用户:{}登录成功", user.getUsername());
         return ApiResponse.ok(user);
     }
@@ -119,24 +122,4 @@ public class PassportController {
         CookieUtils.deleteCookie(request, response, USER_COOKIE_NAME);
         return ApiResponse.ok(HttpStatus.OK);
     }
-
-    /**
-     * 去掉用户敏感信息
-     */
-    private void clearUserSensitive(Users user) {
-        user.setUpdatedTime(null);
-        user.setCreatedTime(null);
-        user.setPassword(null);
-        user.setEmail(null);
-        user.setMobile(null);
-        user.setRealname(null);
-    }
-
-    /**
-     * 设置用户cookie
-     */
-    private void setUserCookie(Users user, HttpServletRequest request, HttpServletResponse response) {
-        CookieUtils.setCookie(request, response, USER_COOKIE_NAME, JacksonUtil.toJackson(user), true);
-    }
-
 }

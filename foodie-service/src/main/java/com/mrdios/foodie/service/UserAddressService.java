@@ -47,4 +47,12 @@ public interface UserAddressService {
      * @param addressId 收货地址id
      */
     void setToDefault(String userId, String addressId);
+
+    /**
+     * 根据用户id和地址id查询地址信息
+     *
+     * @param userId    用户id
+     * @param addressId 地址id
+     */
+    UserAddress queryUserAddress(String userId, String addressId);
 }

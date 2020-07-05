@@ -23,4 +23,12 @@ public interface ItemsMapper extends MyMapper<Items> {
      * 根据规格查询商品信息,用于购物车商品信息刷新
      */
     List<ShopCartVo> queryItemsBySpecIds(@Param("specIds") List<String> specIds);
+
+    /**
+     * 库存扣减
+     *
+     * @param specId   规格id
+     * @param buyCount 购买数量
+     */
+    int decreaseItemSpecStock(@Param("specId") String specId, @Param("buyCount") int buyCount);
 }

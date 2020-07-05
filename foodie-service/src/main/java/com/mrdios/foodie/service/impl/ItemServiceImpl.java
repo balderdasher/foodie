@@ -1,8 +1,10 @@
 package com.mrdios.foodie.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.mrdios.foodie.BizException;
 import com.mrdios.foodie.common.bean.PageModel;
 import com.mrdios.foodie.common.enums.CommentLevelEnum;
+import com.mrdios.foodie.common.enums.YesOrNoEnum;
 import com.mrdios.foodie.common.utils.DesensitizationUtil;
 import com.mrdios.foodie.mapper.*;
 import com.mrdios.foodie.pojo.*;
@@ -117,6 +119,45 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(propagation = Propagation.SUPPORTS)
     public List<ShopCartVo> queryItemsBySpecIds(List<String> specIds) {
         return itemsMapper.queryItemsBySpecIds(specIds);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public ItemsSpec queryItemSpecById(String specId) {
+        return itemsSpecMapper.selectByPrimaryKey(specId);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public String queryItemMainImgById(String itemId) {
+        ItemsImg img = new ItemsImg();
+        img.setIsMain(YesOrNoEnum.YES.getCode());
+        img.setItemId(itemId);
+        ItemsImg mainImg = itemsImgMapper.selectOne(img);
+        return null != mainImg ? mainImg.getUrl() : "";
+    }
+
+    /**
+     * todo：分布式锁
+     * synchronized 锁方法减库存-集群环境无用且性能低下，不推荐
+     * 锁数据库 导致数据库性能低下，不推荐
+     * 分布式锁 zookeeper redis 推荐
+     *
+     * @param specId   规格id
+     * @param buyCount 购买数量
+     */
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void decreaseItemSpecStock(String specId, int buyCount) {
+        // 1.库存查询
+        ItemsSpec spec = queryItemSpecById(specId);
+        int stock = spec.getStock();
+        // 2.扣减条件判断
+        if (stock - buyCount < 0) {
+            throw new BizException("库存不足");
+        }
+        // 3.扣减库存
+        itemsMapper.decreaseItemSpecStock(specId, buyCount);
     }
 
     private Integer getCommentCountByLevel(String itemId, Integer level) {

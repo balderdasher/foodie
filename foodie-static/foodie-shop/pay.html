@@ -552,7 +552,9 @@
 								}
 							})
 							.then(res => {
-								if (res.data.status == 200) {
+                        if(res.data.status == 200;
+                )
+                    {
 									// alert("OK");
 									var orderId = res.data.data;
 									// 判断是否微信还是支付宝支付
@@ -579,8 +581,8 @@
 								} else {
 									alert(res.data.msg);
 								}
-							});
-				},
+                })
+                },
 				// 编辑地址
 				editAddress(addressId) {
 					// 获得编辑的地址内容
@@ -648,20 +650,22 @@
 								}
 							})
 							.then(res => {
-								if (res.data.status == 200) {
+                        if(res.data.status == 200;
+                )
+                    {
 									this.renderUserAddressList();
 								} else {
 									alert(res.data.msg);
 								}
-							});
-				},
+                })
+                },
 				// 设置默认地址
 				setDefaultAddress(addressId) {
 					var userInfo = this.userInfo;
 					var serverUrl = app.serverUrl;
 					axios.defaults.withCredentials = true;
 					axios.post(
-							serverUrl + '/address/setDefalut?userId=' + userInfo.id + "&addressId=" + addressId, 
+                        serverUrl + '/address/setDefault?userId=' + userInfo.id + "&addressId=" + addressId,
 							{},
 							{
 								headers: {
@@ -670,13 +674,15 @@
 								}
 							})
 							.then(res => {
-								if (res.data.status == 200) {
+                        if(res.data.status == 200;
+                )
+                    {
 									this.renderUserAddressList();
 								} else {
 									alert(res.data.msg);
 								}
-							});
-				},
+                })
+                },
 				// 选择地址，切换选中效果
 				chooseAddress(choosedAddressId) {
 					this.choosedAddressId = choosedAddressId;
@@ -789,7 +795,9 @@
 								}
 							})
 							.then(res => {
-								if (res.data.status == 200) {
+                            if(res.data.status == 200;
+                    )
+                        {
 									this.closeAddressDialog();
 									this.renderUserAddressList();
 
@@ -798,8 +806,8 @@
 								} else if (res.data.status == 500) {
 									alert(res.data.msg);
 								}
-							});
-					} else {
+                    })
+                    } else {
 						axios.post(
 							serverUrl + '/address/update', 
 							{
@@ -819,14 +827,16 @@
 								}
 							})
 							.then(res => {
-								if (res.data.status == 200) {
+                            if(res.data.status == 200;
+                    )
+                        {
 									this.closeAddressDialog();
 									this.renderUserAddressList();
 								} else if (res.data.status == 500) {
 									alert(res.data.msg);
 								}
-							});
-					}
+                    })
+                    }
 					
 				},
 				closeAddressDialog() {
@@ -854,7 +864,9 @@
 								}
 							})
 						.then(res => {
-							if (res.data.status == 200) {
+                        if(res.data.status == 200;
+                )
+                    {
 								var addressList = res.data.data;
 								// console.log(addressList);
 								this.addressList = addressList;
@@ -871,8 +883,8 @@
 								alert(res.data.msg);
 								console.log(res.data.msg);
 							}
-						});
-				},
+                })
+                },
 				flushAddressForm() {
 					this.receiver = "";
 					this.mobile = "";
@@ -909,7 +921,7 @@
 						app.goErrorPage();
 					}
 
-					var specIdsArray = new Array();
+                    var specIdsArray = [];
 					specIdsArray = selectedItemSpecIds.split(",");
 
 					var orderItemList = [];
